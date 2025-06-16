@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Credit Engine - Enroll Action</title>
+</head>
+<body>
+  <h2>Enroll User Action</h2>
+  <form id="enrollForm">
+    <label>User ID: <input type="text" name="userId" required /></label><br><br>
+    <label>Action Type:
+      <select name="actionType" required>
+        <option value="signup">Signup</option>
+        <option value="referral">Referral</option>
+        <option value="social-post">Social Post</option>
+        <option value="coffee-wall">Coffee Wall</option>
+        <option value="purchase">Purchase</option>
+      </select>
+    </label><br><br>
+    <label>Spend (optional): <input type="number" name="spend" /></label><br><br>
+    <label>Referrer ID (optional): <input type="text" name="referrerId" /></label><br><br>
+    <button type="submit">Submit</button>
+  </form>
+  <pre id="response"></pre>
+  <script>
+    const form = document.getElementById('enrollForm');
+    const responseBox = document.getElementById('response');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+      if (data.spend === '') delete data.spend;
+      else data.spend = Number(data.spend);
+      const res = await fetch('/api/enroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json();
+      responseBox.textContent = JSON.stringify(result, null, 2);
+    });
+  </script>
+</body>
+</html>
